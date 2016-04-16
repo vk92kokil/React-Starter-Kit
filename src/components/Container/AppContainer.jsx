@@ -1,13 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-class AppContainer extends Component{
-  constructor(props){
-    super(props);
-  }
-  render(){
+class AppContainer extends Component {
+  static propTypes = {
+    children: PropTypes.object,
+  };
+  render() {
     return (
       <div>
-        <h1>Yahooooooooooo.</h1>
         {this.props.children}
       </div>
     );

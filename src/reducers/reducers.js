@@ -3,8 +3,8 @@
  */
 import { combineReducers } from 'redux';
 import { routerStateReducer as router } from 'redux-router';
-const initialState = {
+const initialState = { //	eslint-disable-line no-unused-vars
 
 };
-const rootReducer = combineReducers({router});
+const rootReducer = combineReducers({ router });
 export default rootReducer;

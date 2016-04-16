@@ -1,6 +1,8 @@
 var path = require('path');
 const webpack = require('webpack');
-var DEBUG = true;
+const DEBUG = true;
+const STYLE_LOADER = 'style-loader';
+const CSS_LOADER = DEBUG ? 'css-loader' : 'css-loader?minimize';
 const AUTOPREFIXER_BROWSERS = [
   'Android 2.3',
   'Android >= 4',
@@ -26,22 +28,30 @@ module.exports = {
   },
   devtool: DEBUG ? 'source-map': false,
   module: {
+    preLoaders: [
+        {
+         test: /\.jsx?$/, 
+         loader: 'eslint', exclude: /node_modules/ 
+        }
+    ],
     loaders: [
       {
         test: /\.jsx?$/,
         loader: 'babel',
         exclude: /node_modules/,
         query: {
-          presets:['es2015', 'react', 'stage-0']
+          cacheDirectory: true,
+          plugins: ['transform-decorators-legacy'],
+          presets: DEBUG ? ['es2015', 'react', 'stage-0', 'react-hmre'] : ['es2015', 'react', 'stage-0']
         }
       },
       {
         test: /\.css$/,
-        loader: 'style!css!postcss-loader',
+        loader: STYLE_LOADER +'!'+ CSS_LOADER +'!'+ 'postcss',
       },
       {
         test: /\.scss/,
-        loader: 'style!css!postcss-loader!sass',
+        loader: STYLE_LOADER +'/useable'+'!'+ CSS_LOADER +'!'+ 'postcss!saas',
       },
       {
         test: /\.(png|jpe?g|gif)$/,
@@ -64,4 +74,16 @@ module.exports = {
       require('autoprefixer')({ browsers: AUTOPREFIXER_BROWSERS }),
     ];
   },
+  plugins: DEBUG ? [
+      new webpack.HotModuleReplacementPlugin(), 
+      new webpack.NoErrorsPlugin(),
+      new webpack.DefinePlugin({'process.env': {'NODE_ENV': JSON.stringify('development')}}),
+      ] : [
+      new webpack.NoErrorsPlugin(),
+      new webpack.DefinePlugin({'process.env': {'NODE_ENV': JSON.stringify('production')}}),
+      new webpack.optimize.OccurenceOrderPlugin(),
+      new webpack.optimize.DedupePlugin(),
+      new webpack.optimize.UglifyJsPlugin({compressor: {warnings: false}, comments: false }),
+      new webpack.optimize.AggressiveMergingPlugin()
+    ]
 }

@@ -4,4 +4,3 @@ build
 .DS_Store
 .idea/**
 npm-debug.log
-.com.apple.timemachine.supported
